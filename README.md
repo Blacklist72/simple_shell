@@ -1,1 +1,1 @@
-This repo is for the Alx simple shell Project
+This repo is for the ALX simple shell Project with my Peeer.
