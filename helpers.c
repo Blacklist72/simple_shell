@@ -106,7 +106,7 @@ void read_cmd(data *d)
 	ssize_t nread;
 	int i = 0;
 
-	nread = _getline(&d->cmd, &n, stdin);
+	nread = my_getlineHelper(&d->cmd, &n, stdin);
 
 	if (nread == -1)
 	{
