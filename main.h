@@ -87,10 +87,10 @@ char *_strdup(const char *str);
 int _isnumber(const char *status);
 int _isdigit(int c);
 
-/* my_getlineHelper.c */
+/* _getline.c */
 #define READ_BUF_SIZE 1024
 
-ssize_t my_getlineHelper(char **line_ptr, size_t *line_size, FILE *file)
+ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
 
 
 #endif
