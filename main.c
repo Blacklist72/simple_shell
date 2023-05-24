@@ -1,57 +1,17 @@
 #include "main.h"
 
 /**
- * main - starting point of the program
- * @argc: number of arguments
- * @argv: array of arguments
- * @env: array of environment variables
- * Return: 0 on success, 1 on failure
+ * main - init data
+ * @argc: input size of @argv
+ * @argv: input array of command line arguments
+ * Return: Always 0.
  */
-int main(int argc, char **argv, char **env)
+int main(int argc, char **argv)
 {
-    char *line = NULL;
-    char **tokens = NULL;
-    size_t len = 0;
-    ssize_t read = 0;
-    int status = 0;
+	data d;
+	(void)argc;
+	init_data(&d, argv[0]);
+	_exec(&d);
 
-    (void)argc;
-    handleSIGINT(0);
-
-    while (1)
-    {
-        if (isatty(STDIN_FILENO))
-            write(STDOUT_FILENO, "$ ", 2);
-
-        read = getline(&line, &len, stdin);
-
-        if (read == -1)
-        {
-            if (isatty(STDIN_FILENO))
-                write(STDOUT_FILENO, "\n", 1);
-            break;
-        }
-
-        if (line[0] == '\n')
-            continue;
-
-        tokens = tokenize(line);
-
-        if (tokens == NULL)
-            continue;
-
-        if (tokens[0] == NULL)
-        {
-            free(tokens);
-            continue;
-        }
-
-        status = execute(tokens, argv, env);
-
-        free(tokens);
-    }
-
-    free(line);
-    return status;
+	return (0);
 }
-
