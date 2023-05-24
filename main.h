@@ -1,95 +1,124 @@
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef _MAIN_H_
+#define _MAIN_H_
 
-#define PROMPT "#csisfun$ "
-
-#include <unistd.h>
-#include <stdlib.h>
 #include <stdio.h>
-#include <stddef.h>
-#include <sys/wait.h>
-#include <errno.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
-#include <signal.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <errno.h>
 
-extern char **environ;
+extern char **environ;  // Declaration of the extern variable environ
 
-/**
- * struct data - holds the main data.
- * @av: Array of tokens to pass for execve
- * @cmd: The user input, the command line
- * @shell_name: The name of the shell program
- * @last_exit_status: last exit status of last command executed
- * @flag_setenv: 1 if user did exec setenv (use it to free memory)
- */
-
-
-typedef struct data
-{
-	char **av;
-	char *cmd;
-	const char *shell_name;
-	int last_exit_status;
-	int flag_setenv;
-} data;
+// Function prototypes
 
 /**
- * struct builtin - holds the main data.
- * @cmd: built in cmd
- * @f: function of builtin cmd
+ * tokenize - Tokenizes a string based on whitespace
+ * @line: The string to be tokenized
+ * Return: An array of tokens
  */
-typedef struct builtin
-{
-	const char *cmd;
-	void (*f)(data *d);
-} builtin;
+char **tokenize(char *line);
 
+/**
+ * getStringLength - Calculates the length of a string
+ * @str: The input string
+ * Return: The length of the string
+ */
+int getStringLength(char *str);
 
+/**
+ * compareStrings - Compares two strings up to a specified number of characters
+ * @str1: The first string
+ * @str2: The second string
+ * @n: The number of characters to compare
+ * Return: 0 if strings are equal, -1 if not
+ */
+int compareStrings(char *str1, char *str2, int n);
 
-/* shell_builtin.c */
-int execute_builtin(data *data)
-void exit_builtin(data *d);
-void env_builtin(data *d);
-void builtin_setenv(data *d);
-void unsetenv_builtin(data *d);
-/* shell_builtin2.c */
-void builtin_change_directory(data *data)
+/**
+ * duplicateString - Creates a duplicate of a string
+ * @str: The input string
+ * Return: The duplicated string
+ */
+char *duplicateString(char *str);
 
-/* shell_utils.c */
-void print_string(const char *str)
-void deallocate_array(char **array)
-void split_string(data *data, const char *delimiter)
-void initialize_data(data *data, const char *shell_name)
-void read_command(data *data)
-/* shell_utils2.c */
-void display_error(const char *program_name, const char *error_msg)
-void remove_whitespace(char *str_input)
-void *resize_memory(void *ptr_input, unsigned int new_size)
+/**
+ * handleSIGINT - Handles the SIGINT signal
+ * @sig_num: The signal number
+ * Return: void
+ */
+void handleSIGINT(int sig_num);
 
-/* shell_exec.c */
-void launch_process(data *data_struct)
-void signal_handler(int signal_num)
-void execute_command(data *data_struct)
+/**
+ * concatenateStrings - Concatenates two strings
+ * @dest: The destination string
+ * @src: The source string
+ * Return: The concatenated string
+ */
+char *concatenateStrings(char *dest, char *src);
 
-/* shell_path.c */
-char *getenvValue(char *name)
-int locateExecutable(data *d)
-int setEnv(data *d, char *name, char *value)
+/**
+ * copyString - Copies a string
+ * @dest: The destination string
+ * @src: The source string
+ * Return: The copied string
+ */
+char *copyString(char *dest, char *src);
 
-/* string_utils.c */
-unsigned int stringLength(char *str)
-int stringCompare(const char *s1, const char *s2)
-int stringCompareN(const char *s1, const char *s2, int n)
-char *stringCopy(char *dest, const char *src)
-char *stringConcatenate(char *dest, const char *src)
+/**
+ * getEnvironmentVariable - Gets the value of an environment variable
+ * @name: The name of the environment variable
+ * Return: The value of the environment variable
+ */
+char *getEnvironmentVariable(char *name);
 
-/* string_utils2.c */
-char *stringDuplicate(const char *str)
-int isNumber(const char *status)
-int isDigit(int c)
+/**
+ * make_path - Combines a directory path and a command
+ * @path: The directory path
+ * @cmd: The command
+ * Return: The combined path
+ */
+char *make_path(char *path, char *cmd);
 
-/* shell_GetLine.c */
-#define READ_BUF_SIZE 1024
-ssize_t GetLine(char **line, size_t *size, FILE *stream);
+/**
+ * get_path - Searches for the executable path of a command
+ * @cmd: The command
+ * Return: The executable path of the command
+ */
+char *get_path(char *cmd);
 
-#endif
+/**
+ * execute - Executes a command with the given arguments
+ * @tokens: The command and its arguments as an array of tokens
+ * @argv: The array of arguments
+ * @env: The array of environment variables
+ * Return: The exit status of the executed command
+ */
+int execute(char **tokens, char **argv, char **env);
+
+/**
+ * freeDoublePointer - Frees a double pointer
+ * @ptr: The double pointer to be freed
+ * Return: void
+ */
+void freeDoublePointer(char **ptr);
+
+/**
+ * freePointer - Frees a pointer
+ * @ptr: The pointer to be freed
+ * Return: void
+ */
+void freePointer(char *ptr);
+
+/**
+ * @tokens: The command and its arguments as an array of tokens
+ * @argv: The array of arguments
+ * @env: The array of environment variables
+ * Return: 0 if the command is a builtin, 1 if not
+ */
+int checkBuiltins(char **tokens, char **argv, char **env);
+
+#endif /* _MAIN_H_ */
