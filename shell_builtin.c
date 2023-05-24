@@ -8,7 +8,7 @@
 int execute_builtin(data *data)
 {
 	builtin builtins[] = {
-		{"exit_shell", exit_builtin},
+		{"exit", exit_builtin},
 		{"show_env", env_builtin},
 		{"set_env", setenv_builtin},
 		{"unset_env", unsetenv_builtin},
@@ -19,7 +19,7 @@ int execute_builtin(data *data)
 
 	for (index = 0; builtins[index].cmd; index++)
 	{
-		if (_strcmp(data->arguments[0], builtins[index].cmd) == 0)
+		if (stringCompare(data->arguments[0], builtins[index].cmd) == 0)
 		{
 			builtins[index].func(data);
 			return (1);
@@ -35,12 +35,12 @@ int execute_builtin(data *data)
  */
 void exit_builtin(data *data)
 {
-	if (data->arguments[1] && _is_number(data->arguments[1]))
+	if (data->arguments[1] && isNumber(data->arguments[1]))
 		data->exit_status = atoi(data->arguments[1]);
-	free_array(data->arguments);
+	deallocate_array(data->arguments);
 	free(data->command);
 	if (data->flag_setenv)
-		free_array(environ);
+		deallocate_array(environ);
 	exit(data->exit_status);
 }
 
@@ -56,8 +56,8 @@ void env_builtin(data *data)
 	(void)data;
 	while (environ[i])
 	{
-		_printf(environ[i]);
-		_printf("\n");
+		print_string(environ[i]);
+		print_string("\n");
 		i++;
 	}
 }
@@ -73,7 +73,7 @@ void setenv_builtin(data *data)
 	(void)data;
 	if (data->arguments[1] && data->arguments[2])
 	{
-		if (_setenv(data, data->arguments[1], data->arguments[2]) == -1)
+		if (setEnv(data, data->arguments[1], data->arguments[2]) == -1)
 		{
 			perror("setenv");
 		}
@@ -93,7 +93,7 @@ void unsetenv_builtin(data *data)
 	(void)data;
 	if (!data->arguments[1] || !getenv(data->arguments[1]))
 	{
-		_perror(data->shell_name, "variable not found.");
+		display_error(data->shell_name, "variable not found.");
 		return;
 	}
 	len = strlen(data->arguments[1]);
